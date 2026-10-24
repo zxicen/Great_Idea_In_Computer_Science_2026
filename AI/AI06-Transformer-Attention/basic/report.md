@@ -16,6 +16,11 @@ python -m pip install -r requirements.txt
 python run_basic.py                  # 打印并保存 output/ 下的矩阵日志与热力图
 python -m unittest -v test_basic     # 手算、行和、非负、掩码、因果性、OJ 程序对照
 python oj_solution.py < input.txt    # OJ 程序，输入格式见 materials/OJ-说明.md
+
+# C++ 副本（需要 g++）
+g++ -std=c++17 -O2 -Wall -Wextra -o attention_basic attention_basic.cpp && ./attention_basic   # 内置自检
+g++ -std=c++17 -O2 -o oj_solution_cpp oj_solution.cpp && ./oj_solution_cpp < input.txt         # 与 oj_solution.py 输出一致
+python -m unittest -v test_cpp       # C++ 与 Python/NumPy 逐元素对照
 ```
 
 ## 1 问答 Q1–Q5

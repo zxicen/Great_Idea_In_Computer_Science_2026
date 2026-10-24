@@ -152,3 +152,18 @@ three_color_backtrack(n, adj, stats):
 | 指数爆炸实验 | 第 4 节 |
 | Q1–Q3、图例、伪代码 | 第 1–3 节 |
 | OJ Accepted 记录、课堂展示 | 需本人提交 OJ 与现场展示，无法代为完成 |
+
+## 6 C++ 副本
+
+| Python 实现 | C++ 副本 | 说明 |
+| --- | --- | --- |
+| `src/solver.py` 的 `two_color`、`three_color_backtrack` | `src/solver.cpp` | 读取 `graph.py` 格式的图文件，输出两种染色结果与 `NODES` |
+| `include/src/three_color.py` | `include/src/three_color.cpp` | OJ 单文件，输出与 Python 版逐字节一致 |
+
+```bash
+g++ -std=c++17 -O2 -Wall -Wextra -o solver src/solver.cpp && ./solver data/triangle.txt
+g++ -std=c++17 -O2 -o three_color include/src/three_color.cpp && ./three_color < input.txt
+python tests/test_cpp.py     # 19 个 OJ 测试点 + 样例 + data/ 与 40 个随机图，与 Python 版对照染色方案与 NODES
+```
+
+两个副本都用递归实现，规则与 Python 版相同（顶点 0..n-1、颜色 0,1,2、只检查已染色邻居）；`three_color_mrv`（Advance）与 Python 版一样未实现。OJ 题目限定 Python 3，C++ 副本仅作对照与参考。

@@ -34,3 +34,4 @@
 - [run_basic.py](run_basic.py)：生成 `output/matrix_log.txt` 与 `output/attention_heatmap.png`，并做因果性、置换等实验。
 - [test_basic.py](test_basic.py)：自动验收（`python -m unittest -v test_basic`）。
 - [report.md](report.md)：Q1–Q5 答案、验收对照与 OJ 提交说明。
+- C++ 副本：[attention_basic.cpp](attention_basic.cpp)（与 `attention_basic.py` 对应，含内置自检）、[oj_solution.cpp](oj_solution.cpp)（与 `oj_solution.py` 输出一致）；[test_cpp.py](test_cpp.py) 把它们与 Python/NumPy 实现逐元素对照（`python -m unittest -v test_cpp`）。
