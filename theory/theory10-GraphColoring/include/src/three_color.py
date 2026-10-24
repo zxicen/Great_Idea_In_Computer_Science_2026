@@ -74,8 +74,26 @@ UNCOLORED = -1  # sentinel meaning "this vertex has no color yet"
 #     Chapter 6 (Constraint Satisfaction Problems) — the backtracking
 #     search you are writing is its Figure 6.5 in disguise.
 def three_color(n: int, adj: List[Set[int]]) -> Tuple[Optional[List[int]], int]:
-    # TODO: your code here. Replace the line below.
-    return None, 0
+    coloring = [UNCOLORED] * n
+    nodes = 0
+
+    def dfs(v: int) -> bool:
+        nonlocal nodes
+        nodes += 1
+        if v == n:
+            return True
+        for c in range(NUM_COLORS):
+            if any(coloring[u] == c for u in adj[v]):
+                continue
+            coloring[v] = c
+            if dfs(v + 1):
+                return True
+            coloring[v] = UNCOLORED
+        return False
+
+    if dfs(0):
+        return coloring, nodes
+    return None, nodes
 
 
 # ---------------- provided I/O below — do not modify ----------------
