@@ -151,7 +151,8 @@ three_color_backtrack(n, adj, stats):
 | OJ 框架 `include/src/three_color.py` | 本地 20/20（19 类测试点 + 题面样例精确比较） |
 | 指数爆炸实验 | 第 4 节 |
 | Q1–Q3、图例、伪代码 | 第 1–3 节 |
-| OJ Accepted 记录、课堂展示 | 需本人提交 OJ 与现场展示，无法代为完成 |
+| 课堂展示 | 已完成展示材料：`docs/presentation.pptx`（15 页，含讲稿备注，可编辑图表）及 PDF 版 `docs/presentation.pdf`；现场讲解由本人进行 |
+| OJ Accepted 记录 | 需本人提交 OJ 后留存，无法代为完成 |
 
 ## 6 C++ 副本
 
