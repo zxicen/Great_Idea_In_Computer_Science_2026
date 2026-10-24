@@ -1,0 +1,8 @@
+16 7
+query abc
+add abc
+add abc
+add abc
+query abc
+query abd
+query abc

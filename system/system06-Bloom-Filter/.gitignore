@@ -13,3 +13,4 @@ __pycache__/
 *.exe
 build/
 .test_build/
+/basic/bloom-basic
