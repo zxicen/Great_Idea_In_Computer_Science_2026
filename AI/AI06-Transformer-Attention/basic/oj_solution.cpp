@@ -2,7 +2,8 @@
 //
 // 输入：第一行 n d_model d_k d_v causal；随后依次为 X、W_Q、W_K、W_V（均按行优先）。
 // 输出：依次为 Q、K、V、S、A、O 的全部元素（行优先，每行一个矩阵行）。
-// S = Q K^T / sqrt(d_k) 为未加掩码的缩放分数；A = softmax(S + mask)，掩码在 softmax 之前加上。
+// S = Q K^T / sqrt(d_k)；因果掩码（causal=1）在 softmax 之前令 S_ij = -inf (j > i)，
+// 输出的 S 即为加掩码后的分数（被屏蔽位置输出 -inf），A = softmax(S)，被屏蔽位置恰好为 0。
 //
 //     g++ -std=c++17 -O2 -o oj_solution oj_solution.cpp && ./oj_solution < input.txt
 #include <algorithm>
@@ -62,20 +63,21 @@ int main() {
     for (auto& row : S)
         for (double& x : row) x /= scale;
 
-    Matrix weights = S;
     const double neg_inf = -std::numeric_limits<double>::infinity();
-    for (int i = 0; i < n; ++i) {
-        if (causal)
-            for (int j = i + 1; j < n; ++j) weights[i][j] += neg_inf;
-        const double mx = *std::max_element(weights[i].begin(), weights[i].end());  // 先减去该行最大值
+    if (causal)
+        for (int i = 0; i < n; ++i)
+            for (int j = i + 1; j < n; ++j) S[i][j] = neg_inf;
+
+    Matrix A = S;
+    for (auto& row : A) {
+        const double mx = *std::max_element(row.begin(), row.end());  // 先减去该行最大值，对角线保证 mx 有限
         double total = 0.0;
-        for (double& x : weights[i]) {
+        for (double& x : row) {
             x = std::exp(x - mx);  // 被屏蔽位置为 -inf，exp 后恰好为 0
             total += x;
         }
-        for (double& x : weights[i]) x /= total;
+        for (double& x : row) x /= total;
     }
-    const Matrix& A = weights;
     const Matrix O = matmul(A, V);
 
     for (const Matrix& m : {std::cref(Q), std::cref(K), std::cref(V), std::cref(S), std::cref(A), std::cref(O)})

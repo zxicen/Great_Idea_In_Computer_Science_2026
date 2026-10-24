@@ -2,7 +2,8 @@
 
 输入：第一行 n d_model d_k d_v causal；随后依次为 X、W_Q、W_K、W_V（均按行优先）。
 输出：依次为 Q、K、V、S、A、O 的全部元素（行优先，每行一个矩阵行）。
-S = Q K^T / sqrt(d_k) 为未加掩码的缩放分数；A = softmax(S + mask)，掩码在 softmax 之前加上。
+S = Q K^T / sqrt(d_k)；因果掩码（causal=1）在 softmax 之前令 S_ij = -inf (j > i)，
+输出的 S 即为加掩码后的分数（被屏蔽位置输出 -inf），A = softmax(S)，被屏蔽位置恰好为 0。
 """
 import math
 import sys
@@ -40,11 +41,10 @@ def main():
     scale = math.sqrt(d_k)
     S = [[x / scale for x in row] for row in matmul(Q, [list(c) for c in zip(*K)])]
 
-    neg_inf = float("-inf")
-    A = []
-    for i in range(n):
-        masked = [S[i][j] + (neg_inf if causal and j > i else 0.0) for j in range(n)]
-        A.append(softmax_row(masked))
+    if causal:
+        neg_inf = float("-inf")
+        S = [[neg_inf if j > i else x for j, x in enumerate(row)] for i, row in enumerate(S)]
+    A = [softmax_row(row) for row in S]
     O = matmul(A, V)
 
     out = []
