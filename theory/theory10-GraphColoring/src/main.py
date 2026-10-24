@@ -83,6 +83,8 @@ def cmd_bench(args):
     solvers = _solvers()
     if args.skip_naive:
         solvers = solvers[1:]
+    elif args.naive_only:  # Basic 阶段：MRV 尚未实现时只测朴素回溯
+        solvers = solvers[:1]
 
     header = ["n", "m", "可染色比例"] + [f"{name}节点数(均值)" for name, _ in solvers] \
         + [f"{name}耗时ms(均值)" for name, _ in solvers]
@@ -147,6 +149,8 @@ def main():
     p_bench.add_argument("--seed", type=int, default=2026)
     p_bench.add_argument("--skip-naive", dest="skip_naive", action="store_true",
                          help="跳过朴素回溯（规模较大时它可能跑不动）")
+    p_bench.add_argument("--naive-only", dest="naive_only", action="store_true",
+                         help="只测朴素回溯（Basic 指数爆炸实验，不需要 MRV）")
 
     args = parser.parse_args()
     handler = {"solve": cmd_solve, "gen": cmd_gen, "bench": cmd_bench}[args.command]

@@ -12,3 +12,9 @@ g++ -std=c++17 -O2 main.cpp -o bloom-basic
 ```
 
 测试空集合、重复插入、碰撞、`m=1` 和不存在的元素。提交 OJ AC 记录、源码、测试记录与 Q1-Q5。进阶任务见 [Advance 说明](../advance/README.md)。
+
+## 本目录内容
+
+- [main.cpp](main.cpp)：Basic 实现（两个教学哈希，`vector<uint8_t>` 位数组）。
+- [report.md](report.md)：Q1–Q5 回答与测试记录。
+- [tests/](tests/)：手算用例 `cases/`、`std::set` 精确基线检查器 `oracle_check.cpp` 与测试脚本；运行 `python tests/run_tests.py`。

@@ -1,0 +1,98 @@
+# Transformer Basic 提交材料
+
+| 交付项 | 位置 |
+| --- | --- |
+| 源码（单头注意力，NumPy） | [attention_basic.py](attention_basic.py) |
+| OJ 3280 提交程序（纯标准库，stdin/stdout） | [oj_solution.py](oj_solution.py) |
+| 矩阵日志 | [output/matrix_log.txt](output/matrix_log.txt) |
+| 权重热力图 | [output/attention_heatmap.png](output/attention_heatmap.png) |
+| 自动验收（16 项） | [test_basic.py](test_basic.py) |
+| Q1–Q5 | 本文第 1 节 |
+
+复现：
+
+```bash
+python -m pip install -r requirements.txt
+python run_basic.py                  # 打印并保存 output/ 下的矩阵日志与热力图
+python -m unittest -v test_basic     # 手算、行和、非负、掩码、因果性、OJ 程序对照
+python oj_solution.py < input.txt    # OJ 程序，输入格式见 materials/OJ-说明.md
+
+# C++ 副本（需要 g++）
+g++ -std=c++17 -O2 -Wall -Wextra -o attention_basic attention_basic.cpp && ./attention_basic   # 内置自检
+g++ -std=c++17 -O2 -o oj_solution_cpp oj_solution.cpp && ./oj_solution_cpp < input.txt         # 与 oj_solution.py 输出一致
+python -m unittest -v test_cpp       # C++ 与 Python/NumPy 逐元素对照
+```
+
+## 1 问答 Q1–Q5
+
+**Q1：token 和向量是什么关系？**
+token 是序列的基本单元，可以是汉字、词、子词或图像块，不必恰好等于一个汉字或单词。模型不能直接对符号做矩阵运算，需要先经过表示（词嵌入或手写向量）把每个 token 变成一个 d_model 维向量，X 的第 i 行就是第 i 个位置的向量。向量只是 token 在模型里的表示，**不是词本身**；本任务暂不训练词嵌入，用手写/固定随机向量代表位置。
+
+**Q2：Q、K、V 各参与哪一步？**
+X 分别乘三组矩阵得到 Q=XW_Q、K=XW_K、V=XW_V。**Q 与 K 负责匹配**：S=QKᵀ/√d_k 的第 (i,j) 项衡量“位置 i 的查询与位置 j 的键有多匹配”，再经 softmax 变成权重 A。**V 是被读取的信息**：O=AV，第 i 行输出是对各位置 V 行的加权求和。也就是 Q/K 决定“从哪里读、读多少”，V 决定“读到什么”。除以 √d_k 使高维点积的量级更容易控制。
+
+**Q3：softmax 应沿哪一维计算？**
+沿**每一行**（对 j，即键的维度，`axis=1`）。第 i 行表示位置 i 对所有候选键的一份“读信息”权重，必须非负且和为 1，才能得到 V 的凸组合。按列归一化会变成“每个键被所有查询分摊”，语义不对。实现上先减去每行最大值再求指数（数值稳定），测试里分数为 ±1000 量级也不会溢出。
+
+**Q4：因果掩码屏蔽什么？**
+第 i 行不能访问 j>i 的未来位置，即屏蔽 S 的**严格上三角**，保留对角线（每行至少有一个可见位置）。掩码必须在 softmax **之前**加到 S 上：允许位置加 0，禁止位置加 −∞，softmax 后禁止位置为 0，其余位置自动重新归一化。若先 softmax 再把未来权重置零，行和通常不再是 1（见 `output/matrix_log.txt` 实验 6：第一行只剩 0.669762）。这样位置 i 的输出只依赖 ≤i 的输入，符合自回归生成的因果要求。
+
+**Q5：Q=K=V 为 2×2 单位阵，d_k=2，A 和 O 是多少？**
+
+先算分数：S = QKᵀ/√2 = I/√2 = [[0.707107, 0], [0, 0.707107]]。
+
+- **无掩码**：第一行 softmax([0.707107, 0]) = [e^0.707107, 1]/(e^0.707107+1) = [2.028115, 1]/3.028115 = [0.669762, 0.330238]；第二行对称。
+  A = [[0.669762, 0.330238], [0.330238, 0.669762]]；V=I，所以 **O = A V = A**。
+- **因果掩码**：S+mask = [[0.707107, −∞], [0, 0.707107]]。第一行 softmax([0.707107, −∞]) = [1, 0]（e^{−∞}=0）；第二行没有被屏蔽，不变。
+  A = [[1, 0], [0.330238, 0.669762]]，**O = A**。
+
+第一行的变化：无掩码时位置 1 会把 33.0% 的权重分给位置 2（读取未来），O 的第一行为 [0.669762, 0.330238]；开启因果掩码后位置 1 只能读取自己，权重变为 [1, 0]，O 的第一行等于 V 的第一行 [1, 0]。第二行可以看到位置 1 和自己，不受影响。程序结果与手算一致（日志实验 1，容差 1e-6）。
+
+## 2 验收对照
+
+| 验收要求 | 对应实验/测试 | 结果 |
+| --- | --- | --- |
+| 与手算相符（无掩码、因果掩码两种 A） | 日志实验 1；`HandCheck` | 通过（容差 1e-6） |
+| 形状检查与非空序列 | `check_shapes`；`InputValidation` | 通过（空序列、维度不符均报 `ValueError`） |
+| 数值稳定 softmax | `Numerics.test_softmax_stable_for_large_scores`；OJ 程序大数值测试 | 通过 |
+| 行和为 1、非负、被屏蔽位置为 0、输出形状 | 日志实验 1、2；`Properties`（n=1…32，含因果/非因果） | 通过 |
+| 单个位置时 O=V | 日志实验 3；`test_single_position_output_equals_v` | 通过 |
+| 只改未来输入，较早位置输出不变 | 日志实验 4；`Causality` | 因果掩码下最大变化 0；无掩码时前两行变化 29.66 |
+| 打乱输入顺序，输出同样重排（无掩码） | 日志实验 5 | 最大绝对误差 4.4×10⁻¹⁶ |
+| 掩码必须在 softmax 之前 | 日志实验 6 | 先 softmax 再置零行和为 0.669762，不合格 |
+| OJ 程序与 NumPy 实现一致 | `OnlineJudgeProgram`：随机 n、d 最大到 32，因果/非因果 | 通过（OJ 容差：绝对 1e-6 + 相对 2×10⁻⁵） |
+
+## 3 OJ 3280 提交说明
+
+`oj_solution.py` 只使用标准库（OJ 上不一定有 NumPy），按题面从标准输入读 `n d_model d_k d_v causal` 与 X、W_Q、W_K、W_V，依次输出 Q、K、V、S、A、O 的全部元素，行优先、每个矩阵行占一行、保留 12 位有效数字。
+
+两点对题面的理解：
+1. 题面写明因果掩码在 softmax 之前令 S_ij=−∞，因此 `causal=1` 时输出的 **S 是加掩码后的分数**，被屏蔽位置（j>i）输出 `-inf`；`causal=0` 时 S 就是 QKᵀ/√d_k；
+2. 因果掩码屏蔽 j>i、保留对角线，softmax 前先减该行最大值。
+
+样例（Q5，无掩码）：
+
+```text
+输入：
+2 2 2 2 0
+1 0 0 1
+1 0 0 1
+1 0 0 1
+1 0 0 1
+
+输出（Q、K、V、S、A、O）：
+1 0
+0 1
+1 0
+0 1
+1 0
+0 1
+0.707106781187 0
+0 0.707106781187
+0.669761549327 0.330238450673
+0.330238450673 0.669761549327
+0.669761549327 0.330238450673
+0.330238450673 0.669761549327
+```
+
+OJ 的 AC 记录需要本人登录 ACMOJ 提交 `oj_solution.py`。此前按“S 不含掩码”输出，在子任务“因果掩码”中 WA（`missing/non-finite number at 20`），现已改为输出加掩码后的 S。

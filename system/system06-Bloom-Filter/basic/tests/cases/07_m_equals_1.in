@@ -1,0 +1,6 @@
+1 5
+query a
+add a
+query a
+query zzz
+query ~

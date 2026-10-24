@@ -11,6 +11,9 @@
 动手前请先读 docs/implement_guide.md 第 4 节的函数契约。
 """
 
+import sys
+from collections import deque
+
 NUM_COLORS = 3
 UNCOLORED = -1  # 未染色的哨兵值
 
@@ -30,8 +33,23 @@ def two_color(n, adj):
 
     参考规模：约 20 行。
     """
-    # TODO: 任务一
-    raise NotImplementedError("任务一还没做：请先完成 solver.py 的 two_color，然后运行 python src/check.py")
+    coloring = [UNCOLORED] * n
+    for start in range(n):
+        if coloring[start] != UNCOLORED:
+            continue
+        # 每个连通分量任选起点染 0，之后整个分量的颜色被唯一决定
+        coloring[start] = 0
+        queue = deque([start])
+        while queue:
+            u = queue.popleft()
+            for v in adj[u]:
+                if coloring[v] == UNCOLORED:
+                    coloring[v] = 1 - coloring[u]
+                    queue.append(v)
+                elif coloring[v] == coloring[u]:
+                    # 同色相邻（含自环 u == v）：存在奇环
+                    return None
+    return coloring
 
 
 def three_color_backtrack(n, adj, stats):
@@ -53,8 +71,27 @@ def three_color_backtrack(n, adj, stats):
 
     参考规模：约 20 行。
     """
-    # TODO: 任务二
-    raise NotImplementedError("任务二还没做：请先完成 solver.py 的 three_color_backtrack，然后运行 python src/check.py")
+    # 自环无法合法染色；冲突检查只看已染色邻居，必须在搜索前单独处理
+    if any(v in adj[v] for v in range(n)):
+        return None
+
+    sys.setrecursionlimit(max(sys.getrecursionlimit(), n + 100))
+    coloring = [UNCOLORED] * n
+
+    def dfs(v):
+        stats["nodes"] += 1
+        if v == n:
+            return True
+        for c in range(NUM_COLORS):
+            if any(coloring[u] == c for u in adj[v]):
+                continue
+            coloring[v] = c
+            if dfs(v + 1):
+                return True
+            coloring[v] = UNCOLORED  # 回溯：撤销当前尝试
+        return False
+
+    return coloring if dfs(0) else None
 
 
 def three_color_mrv(n, adj, stats, forward_check=False):
