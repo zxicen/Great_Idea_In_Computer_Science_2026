@@ -67,7 +67,7 @@ X 分别乘三组矩阵得到 Q=XW_Q、K=XW_K、V=XW_V。**Q 与 K 负责匹配*
 `oj_solution.py` 只使用标准库（OJ 上不一定有 NumPy），按题面从标准输入读 `n d_model d_k d_v causal` 与 X、W_Q、W_K、W_V，依次输出 Q、K、V、S、A、O 的全部元素，行优先、每个矩阵行占一行、保留 12 位有效数字。
 
 两点对题面的理解：
-1. 输出的 **S 是未加掩码的 QKᵀ/√d_k**（题面公式 S 不含 mask；掩码只出现在 A=softmax(S+mask) 中）；
+1. 题面写明因果掩码在 softmax 之前令 S_ij=−∞，因此 `causal=1` 时输出的 **S 是加掩码后的分数**，被屏蔽位置（j>i）输出 `-inf`；`causal=0` 时 S 就是 QKᵀ/√d_k；
 2. 因果掩码屏蔽 j>i、保留对角线，softmax 前先减该行最大值。
 
 样例（Q5，无掩码）：
@@ -95,4 +95,4 @@ X 分别乘三组矩阵得到 Q=XW_Q、K=XW_K、V=XW_V。**Q 与 K 负责匹配*
 0.330238450673 0.669761549327
 ```
 
-OJ 的 AC 记录需要本人登录 ACMOJ 提交 `oj_solution.py`；若 OJ 对 S 的定义与上面第 1 点不同（例如要求输出加掩码后的分数），只需修改输出 S 的一行。
+OJ 的 AC 记录需要本人登录 ACMOJ 提交 `oj_solution.py`。此前按“S 不含掩码”输出，在子任务“因果掩码”中 WA（`missing/non-finite number at 20`），现已改为输出加掩码后的 S。

@@ -117,6 +117,21 @@ class InputValidation(unittest.TestCase):
                 attention_forward(*args)
 
 
+def oj_expected(r, causal):
+    """OJ 要求输出 Q、K、V、S、A、O；因果时 S 为加掩码后的分数（j>i 处为 -inf）。"""
+    S = r["S"].copy()
+    if causal:
+        S[np.triu_indices_from(S, k=1)] = -np.inf
+    return np.concatenate([M.ravel() for M in (r["Q"], r["K"], r["V"], S, r["A"], r["O"])])
+
+
+def oj_close(actual, expected):
+    """OJ 容差：绝对 1e-6 + 相对 2e-5；-inf 必须位置相同。"""
+    finite = np.isfinite(expected)
+    return ((np.isinf(actual) == ~finite).all() and (actual[~finite] == expected[~finite]).all()
+            and (np.abs(actual[finite] - expected[finite]) <= 1e-6 + 2e-5 * np.abs(expected[finite])).all())
+
+
 def run_oj(inp):
     p = subprocess.run([sys.executable, str(HERE / "oj_solution.py")], input=inp, capture_output=True,
                        text=True, check=True)
@@ -139,6 +154,8 @@ class OnlineJudgeProgram(unittest.TestCase):
     def test_q5_example_causal(self):
         out = run_oj("2 2 2 2 1\n1 0 0 1\n1 0 0 1\n1 0 0 1\n1 0 0 1\n")
         np.testing.assert_allclose(out[16:20].reshape(2, 2), [[1, 0], [0.330238, 0.669762]], atol=TOL)
+        self.assertEqual(out[13], -np.inf)  # 因果时输出的 S 在 j>i 处为 -inf
+        self.assertTrue(np.isfinite(np.delete(out, 13)).all())
 
     def test_matches_numpy_on_random_inputs(self):
         rng = np.random.default_rng(3)
@@ -146,11 +163,11 @@ class OnlineJudgeProgram(unittest.TestCase):
             for causal in (False, True):
                 X, Wq, Wk, Wv = rand_case(rng, n, dm, dk, dv)
                 r = attention_forward(X, Wq, Wk, Wv, causal)
-                expected = np.concatenate([r[k].ravel() for k in ("Q", "K", "V", "S", "A", "O")])
+                expected = oj_expected(r, causal)
                 actual = run_oj(oj_input(n, dm, dk, dv, causal, X, Wq, Wk, Wv))
                 self.assertEqual(actual.shape, expected.shape)
                 # 与 OJ 说明一致的容差：绝对 1e-6 + 相对 2e-5
-                self.assertTrue((np.abs(actual - expected) <= 1e-6 + 2e-5 * np.abs(expected)).all(),
+                self.assertTrue(oj_close(actual, expected),
                                 f"n={n} dm={dm} dk={dk} dv={dv} causal={causal}")
 
     def test_large_scores_do_not_overflow(self):

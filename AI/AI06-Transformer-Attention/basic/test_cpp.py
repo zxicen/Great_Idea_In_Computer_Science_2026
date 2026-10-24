@@ -22,6 +22,21 @@ def compile_cpp(src, out):
                    check=True, capture_output=True, text=True)
 
 
+def oj_expected(r, causal):
+    """OJ 要求输出 Q、K、V、S、A、O；因果时 S 为加掩码后的分数（j>i 处为 -inf）。"""
+    S = r["S"].copy()
+    if causal:
+        S[np.triu_indices_from(S, k=1)] = -np.inf
+    return np.concatenate([M.ravel() for M in (r["Q"], r["K"], r["V"], S, r["A"], r["O"])])
+
+
+def oj_close(actual, expected):
+    """OJ 容差：绝对 1e-6 + 相对 2e-5；-inf 必须位置相同。"""
+    finite = np.isfinite(expected)
+    return ((np.isinf(actual) == ~finite).all() and (actual[~finite] == expected[~finite]).all()
+            and (np.abs(actual[finite] - expected[finite]) <= 1e-6 + 2e-5 * np.abs(expected[finite])).all())
+
+
 def oj_input(n, dm, dk, dv, causal, X, Wq, Wk, Wv):
     head = f"{n} {dm} {dk} {dv} {int(causal)}\n"
     return head + "\n".join(" ".join(repr(float(v)) for v in M.ravel()) for M in (X, Wq, Wk, Wv)) + "\n"
@@ -65,11 +80,11 @@ class CppCopy(unittest.TestCase):
             for causal in (False, True):
                 X, Wq, Wk, Wv = (rng.normal(size=s) for s in ((n, dm), (dm, dk), (dm, dk), (dm, dv)))
                 r = attention_forward(X, Wq, Wk, Wv, causal)
-                expected = np.concatenate([r[k].ravel() for k in ("Q", "K", "V", "S", "A", "O")])
+                expected = oj_expected(r, causal)
                 actual = np.array(self.run_oj(oj_input(n, dm, dk, dv, causal, X, Wq, Wk, Wv)).split(), dtype=float)
                 self.assertEqual(actual.shape, expected.shape)
                 # 与 OJ 说明一致的容差：绝对 1e-6 + 相对 2e-5
-                self.assertTrue((np.abs(actual - expected) <= 1e-6 + 2e-5 * np.abs(expected)).all(),
+                self.assertTrue(oj_close(actual, expected),
                                 f"n={n} dm={dm} dk={dk} dv={dv} causal={causal}")
 
     def test_large_scores_do_not_overflow(self):
