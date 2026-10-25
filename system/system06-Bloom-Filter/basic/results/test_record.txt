@@ -1,0 +1,18 @@
+[PASS] 01_sample                          queries=3 inserted->MAYBE=1 absent->NO=1 false_positive=1 false_negative=0
+[PASS] 02_empty_set                       queries=3 inserted->MAYBE=0 absent->NO=3 false_positive=0 false_negative=0
+[PASS] 03_no_operations                   queries=0 inserted->MAYBE=0 absent->NO=0 false_positive=0 false_negative=0
+[PASS] 04_repeat_insert                   queries=4 inserted->MAYBE=2 absent->NO=2 false_positive=0 false_negative=0
+[PASS] 05_full_collision                  queries=3 inserted->MAYBE=1 absent->NO=1 false_positive=1 false_negative=0
+[PASS] 06_joint_collision                 queries=3 inserted->MAYBE=1 absent->NO=1 false_positive=1 false_negative=0
+[PASS] 07_m_equals_1                      queries=4 inserted->MAYBE=1 absent->NO=1 false_positive=2 false_negative=0
+[PASS] 08_max_length_large_m              queries=4 inserted->MAYBE=1 absent->NO=3 false_positive=0 false_negative=0
+[PASS] 随机 m=1 n=200                       queries=102 inserted->MAYBE=94 absent->NO=2 false_positive=6 false_negative=0
+[PASS] 随机 m=2 n=200                       queries=103 inserted->MAYBE=90 absent->NO=2 false_positive=11 false_negative=0
+[PASS] 随机 m=3 n=300                       queries=166 inserted->MAYBE=119 absent->NO=5 false_positive=42 false_negative=0
+[PASS] 随机 m=8 n=500                       queries=257 inserted->MAYBE=139 absent->NO=4 false_positive=114 false_negative=0
+[PASS] 随机 m=17 n=800                      queries=399 inserted->MAYBE=181 absent->NO=16 false_positive=202 false_negative=0
+[PASS] 随机 m=64 n=1000                     queries=515 inserted->MAYBE=248 absent->NO=63 false_positive=204 false_negative=0
+[PASS] 随机 m=1000 n=2000                   queries=1006 inserted->MAYBE=380 absent->NO=364 false_positive=262 false_negative=0
+[PASS] 随机 m=1000000 n=10000               queries=5043 inserted->MAYBE=1526 absent->NO=3490 false_positive=27 false_negative=0
+
+全部通过

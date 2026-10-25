@@ -16,5 +16,6 @@ g++ -std=c++17 -O2 main.cpp -o bloom-basic
 ## 本目录内容
 
 - [main.cpp](main.cpp)：Basic 实现（两个教学哈希，`vector<uint8_t>` 位数组）。
-- [report.md](report.md)：Q1–Q5 回答与测试记录。
-- [tests/](tests/)：手算用例 `cases/`、`std::set` 精确基线检查器 `oracle_check.cpp` 与测试脚本；运行 `python tests/run_tests.py`。
+- [report.md](report.md)：Q1–Q5 回答、实现与正确性说明、测试记录和假阳性实验分析。
+- [tests/](tests/)：手算用例 `cases/`、`std::set` 精确基线检查器 `oracle_check.cpp`、测试脚本 `run_tests.py`（运行 `python tests/run_tests.py`）与假阳性实验脚本 `fp_experiment.py`。
+- [results/](results/)：上述脚本的运行结果——`test_record.txt`、`sanitizer_record.txt`、`fp_vs_m.csv`。提交包只带 `main.cpp`、`report.md`、`tests/cases/` 与 `results/`，不带脚本。

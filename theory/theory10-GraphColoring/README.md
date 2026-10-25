@@ -255,8 +255,10 @@ python src/main.py bench --sizes 10 14 18 22 26 30 --skip-naive
 │   ├── main.py            ← 【完整提供】命令行入口（solve / gen / bench）
 │   ├── graph.py           ← 【完整提供】图的读写、随机图/网格图生成、染色验证
 │   └── solver.py          ← 【Basic 任务一、二；Advance C1】二染色 / 朴素回溯 / MRV+前向检查
+├── experiments/
+│   └── gen_basic_data.py  ← Basic 提交材料的实验数据生成脚本（只在仓库中，不进提交包）
 ├── data/                  ← 手工构造的经典测试图（见下表）
-└── results/               ← bench 命令的输出目录（自动创建）
+└── results/               ← bench 命令的输出目录（自动创建）；也存放 Basic 报告引用的实验数据
 ```
 
 `data/` 下的实例（文本格式：`n m` 后跟 m 行边，`#` 开头为注释）：

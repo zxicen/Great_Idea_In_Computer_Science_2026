@@ -1,0 +1,9 @@
+# g++ -std=c++17 -g -fsanitize=address,undefined -fno-sanitize-recover=all main.cpp；对 tests/cases 逐个运行并与 .out 精确比较
+PASS 01_sample
+PASS 02_empty_set
+PASS 03_no_operations
+PASS 04_repeat_insert
+PASS 05_full_collision
+PASS 06_joint_collision
+PASS 07_m_equals_1
+PASS 08_max_length_large_m
