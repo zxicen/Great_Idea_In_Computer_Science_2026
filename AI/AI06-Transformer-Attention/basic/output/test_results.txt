@@ -1,0 +1,21 @@
+test_future_change_affects_past_without_mask (test_basic.Causality.test_future_change_affects_past_without_mask) ... ok
+test_future_change_does_not_affect_past_when_causal (test_basic.Causality.test_future_change_does_not_affect_past_when_causal) ... ok
+test_permutation_equivariance_without_mask (test_basic.Causality.test_permutation_equivariance_without_mask) ... ok
+test_causal (test_basic.HandCheck.test_causal) ... ok
+test_scores_are_unmasked (test_basic.HandCheck.test_scores_are_unmasked) ... ok
+test_unmasked (test_basic.HandCheck.test_unmasked) ... ok
+test_bad_shapes_raise (test_basic.InputValidation.test_bad_shapes_raise) ... ok
+test_softmax_stable_for_large_scores (test_basic.Numerics.test_softmax_stable_for_large_scores) ... ok
+test_zeroing_after_softmax_breaks_row_sum (test_basic.Numerics.test_zeroing_after_softmax_breaks_row_sum) ... ok
+test_large_scores_do_not_overflow (test_basic.OnlineJudgeProgram.test_large_scores_do_not_overflow) ... ok
+test_matches_numpy_on_random_inputs (test_basic.OnlineJudgeProgram.test_matches_numpy_on_random_inputs) ... ok
+test_q5_example (test_basic.OnlineJudgeProgram.test_q5_example) ... ok
+test_q5_example_causal (test_basic.OnlineJudgeProgram.test_q5_example_causal) ... ok
+test_mask_is_strict_upper_triangle (test_basic.Properties.test_mask_is_strict_upper_triangle) ... ok
+test_random_shapes (test_basic.Properties.test_random_shapes) ... ok
+test_single_position_output_equals_v (test_basic.Properties.test_single_position_output_equals_v) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.212s
+
+OK

@@ -31,7 +31,8 @@
 
 - [attention_basic.py](attention_basic.py)：单头缩放点积注意力（形状检查、稳定 softmax、因果掩码）。
 - [oj_solution.py](oj_solution.py)：OJ 3280 的标准输入输出程序（纯标准库）。
-- [run_basic.py](run_basic.py)：生成 `output/matrix_log.txt` 与 `output/attention_heatmap.png`，并做因果性、置换等实验。
-- [test_basic.py](test_basic.py)：自动验收（`python -m unittest -v test_basic`）。
-- [report.md](report.md)：Q1–Q5 答案、验收对照与 OJ 提交说明。
+- [run_basic.py](run_basic.py)：生成 `output/matrix_log.txt` 与 `output/attention_heatmap.png`，并做因果性、置换、√d_k 缩放等 7 个实验。
+- [test_basic.py](test_basic.py)：自动验收（`python -m unittest -v test_basic`），运行记录见 `output/test_results.txt`。
+- [output/](output/)：实验与测试数据——矩阵日志、热力图、测试记录、`oj_samples/`（OJ 样例输入输出）。提交包只带这些数据，不带上面的复现脚本。
+- [report.md](report.md)：Q1–Q5 答案、实现说明、实验数据、验收对照与 OJ 提交说明。
 - C++ 副本：[attention_basic.cpp](attention_basic.cpp)（与 `attention_basic.py` 对应，含内置自检）、[oj_solution.cpp](oj_solution.cpp)（与 `oj_solution.py` 输出一致）；[test_cpp.py](test_cpp.py) 把它们与 Python/NumPy 实现逐元素对照（`python -m unittest -v test_cpp`）。

@@ -16,7 +16,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 
-from attention_basic import attention_forward, check_properties, max_prefix_change  # noqa: E402
+from attention_basic import attention_forward, check_properties, max_prefix_change, scaled_scores, softmax_rows  # noqa: E402
 
 OUT = Path(__file__).resolve().parent / "output"
 TOL = 1e-6
@@ -123,7 +123,36 @@ def experiments():
     print("  行和:", np.round(wrong.sum(axis=1), 6), "← 第一行不再是 1")
     print("  正确做法（softmax 前加 -inf）的行和:", np.round(results[("q5", True)]["A"].sum(axis=1), 6))
     print()
+
+    print("=" * 70)
+    print("实验 7：为什么要除以 sqrt(d_k)（n=8，Q、K 元素独立服从 N(0,1)，每个 d_k 重复 200 次，种子 0）")
+    print("=" * 70)
+    scaling_experiment()
     return results, three
+
+
+def scaling_experiment(n=8, trials=200, dims=(1, 4, 16, 64, 256, 1024)):
+    rng = np.random.default_rng(0)
+    print(f"{'d_k':>5} | {'S 标准差(不缩放)':>16} | {'S 标准差(缩放)':>14} | "
+          f"{'行最大权重(不缩放)':>18} | {'行最大权重(缩放)':>16} | {'最大权重>0.99 的行占比(不缩放)':>24}")
+    for d in dims:
+        raw_std, sc_std, raw_max, sc_max, raw_sat = [], [], [], [], []
+        for _ in range(trials):
+            Q = rng.normal(size=(n, d))
+            K = rng.normal(size=(n, d))
+            raw = Q @ K.T
+            scaled = scaled_scores(Q, K)
+            a_raw, a_sc = softmax_rows(raw), softmax_rows(scaled)
+            raw_std.append(raw.std())
+            sc_std.append(scaled.std())
+            raw_max.append(a_raw.max(axis=1).mean())
+            sc_max.append(a_sc.max(axis=1).mean())
+            raw_sat.append((a_raw.max(axis=1) > 0.99).mean())
+        print(f"{d:>5} | {np.mean(raw_std):>16.3f} | {np.mean(sc_std):>14.3f} | "
+              f"{np.mean(raw_max):>18.3f} | {np.mean(sc_max):>16.3f} | {np.mean(raw_sat):>24.3f}")
+    print("  缩放后 S 的标准差始终约为 1，权重分布与 d_k 无关；不缩放时标准差约为 sqrt(d_k)，"
+          "softmax 趋于只看最大值（one-hot），权重对输入的变化几乎不敏感。")
+    print()
 
 
 def draw(ax, M, title, causal=None):

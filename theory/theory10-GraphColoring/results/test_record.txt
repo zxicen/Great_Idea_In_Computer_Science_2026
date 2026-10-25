@@ -1,0 +1,109 @@
+$ python src/check.py
+============================================================
+三染色项目自测
+============================================================
+[✅ 通过] 任务一：two_color 二染色（二分图判定）
+[✅ 通过] 任务二：three_color_backtrack 朴素回溯
+[⏳ 未完成] Advance C1：three_color_mrv 启发式与前向检查 —— Advance C1还没做：请先完成 solver.py 的 three_color_mrv，然后运行 python src/check.py
+------------------------------------------------------------
+当前进度 2/3。失败/未完成的项请对照 docs/implement_guide.md 调试。
+[退出码 1]
+
+$ python tests/test_oj_three_color.py
+[PASS] 1 三角形（题面样例）                    SAT    NODES 4           19.3 ms
+[PASS] 2 K4                           UNSAT  NODES 16          18.5 ms
+[PASS] 3 单点无边                         SAT    NODES 2           18.2 ms
+[PASS] 4 空图 n=5                       SAT    NODES 6           23.5 ms
+[PASS] 5 五元环                          SAT    NODES 6           18.7 ms
+[PASS] 6 链 n=10                       SAT    NODES 11          18.3 ms
+[PASS] 7 三角形+K4 不连通                   UNSAT  NODES 106         18.3 ms
+[PASS] 8 三角形+五元环 不连通                  SAT    NODES 9           19.0 ms
+[PASS] 9 Petersen                     SAT    NODES 11          18.5 ms
+[PASS] 10 4x4 网格                      SAT    NODES 17          18.7 ms
+[PASS] 11 Grötzsch                    UNSAT  NODES 472         19.5 ms
+[PASS] 12 K5                          UNSAT  NODES 16          18.2 ms
+[PASS] 13 长链 n=200                    SAT    NODES 201         19.1 ms
+[PASS] 14 偶环 n=500                    SAT    NODES 501         19.5 ms
+[PASS] 15 K(40,40)                    SAT    NODES 81          19.7 ms
+[PASS] 16 分层三部图 n=500 m=1500          SAT    NODES 501         21.3 ms
+[PASS] 17 含自环                         UNSAT  NODES 0           19.2 ms
+[PASS] 18 n=1 且自环                     UNSAT  NODES 0           18.7 ms
+[PASS] 19 随机图 n=28 m=62               UNSAT  NODES 224443     220.0 ms
+[PASS] 题面样例全文精确比较
+
+20/20 通过
+[退出码 0]
+
+$ python tests/test_cpp.py
+[PASS] OJ C++ 1 三角形（题面样例）                  SAT    NODES 4            1.7 ms
+[PASS] OJ C++ 2 K4                         UNSAT  NODES 16           1.9 ms
+[PASS] OJ C++ 3 单点无边                       SAT    NODES 2            1.5 ms
+[PASS] OJ C++ 4 空图 n=5                     SAT    NODES 6            1.4 ms
+[PASS] OJ C++ 5 五元环                        SAT    NODES 6            1.4 ms
+[PASS] OJ C++ 6 链 n=10                     SAT    NODES 11           1.6 ms
+[PASS] OJ C++ 7 三角形+K4 不连通                 UNSAT  NODES 106          1.5 ms
+[PASS] OJ C++ 8 三角形+五元环 不连通                SAT    NODES 9            1.5 ms
+[PASS] OJ C++ 9 Petersen                   SAT    NODES 11           1.5 ms
+[PASS] OJ C++ 10 4x4 网格                    SAT    NODES 17           1.8 ms
+[PASS] OJ C++ 11 Grötzsch                  UNSAT  NODES 472          1.5 ms
+[PASS] OJ C++ 12 K5                        UNSAT  NODES 16           1.4 ms
+[PASS] OJ C++ 13 长链 n=200                  SAT    NODES 201          1.5 ms
+[PASS] OJ C++ 14 偶环 n=500                  SAT    NODES 501          1.4 ms
+[PASS] OJ C++ 15 K(40,40)                  SAT    NODES 81           1.7 ms
+[PASS] OJ C++ 16 分层三部图 n=500 m=1500        SAT    NODES 501          2.0 ms
+[PASS] OJ C++ 17 含自环                       UNSAT  NODES 0            1.4 ms
+[PASS] OJ C++ 18 n=1 且自环                   UNSAT  NODES 0            1.4 ms
+[PASS] OJ C++ 19 随机图 n=28 m=62             UNSAT  NODES 224443       3.3 ms
+[PASS] OJ C++ 题面样例全文精确比较
+[PASS] solver C++ cycle5.txt               二染色=否 三染色=是 NODES=6
+[PASS] solver C++ grid_4x4.txt             二染色=是 三染色=是 NODES=17
+[PASS] solver C++ k4.txt                   二染色=否 三染色=否 NODES=16
+[PASS] solver C++ mycielski4.txt           二染色=否 三染色=否 NODES=472
+[PASS] solver C++ petersen.txt             二染色=否 三染色=是 NODES=11
+[PASS] solver C++ triangle.txt             二染色=否 三染色=是 NODES=4
+[PASS] solver C++ 随机图 #0 n=12              二染色=否 三染色=是 NODES=13
+[PASS] solver C++ 随机图 #1 n=7               二染色=否 三染色=否 NODES=16
+[PASS] solver C++ 随机图 #2 n=11              二染色=是 三染色=是 NODES=12
+[PASS] solver C++ 随机图 #3 n=11              二染色=是 三染色=是 NODES=12
+[PASS] solver C++ 随机图 #4 n=11              二染色=否 三染色=否 NODES=130
+[PASS] solver C++ 随机图 #5 n=8               二染色=否 三染色=是 NODES=9
+[PASS] solver C++ 随机图 #6 n=5               二染色=否 三染色=是 NODES=8
+[PASS] solver C++ 随机图 #7 n=10              二染色=否 三染色=否 NODES=79
+[PASS] solver C++ 随机图 #8 n=7               二染色=否 三染色=是 NODES=8
+[PASS] solver C++ 随机图 #9 n=7               二染色=是 三染色=是 NODES=8
+[PASS] solver C++ 随机图 #10 n=9              二染色=否 三染色=否 NODES=34
+[PASS] solver C++ 随机图 #11 n=7              二染色=否 三染色=否 NODES=40
+[PASS] solver C++ 随机图 #12 n=7              二染色=是 三染色=是 NODES=8
+[PASS] solver C++ 随机图 #13 n=13             二染色=否 三染色=否 NODES=868
+[PASS] solver C++ 随机图 #14 n=11             二染色=否 三染色=是 NODES=12
+[PASS] solver C++ 随机图 #15 n=10             二染色=是 三染色=是 NODES=11
+[PASS] solver C++ 随机图 #16 n=3              二染色=否 三染色=是 NODES=4
+[PASS] solver C++ 随机图 #17 n=10             二染色=否 三染色=是 NODES=11
+[PASS] solver C++ 随机图 #18 n=11             二染色=是 三染色=是 NODES=12
+[PASS] solver C++ 随机图 #19 n=13             二染色=否 三染色=否 NODES=70
+[PASS] solver C++ 随机图 #20 n=8              二染色=否 三染色=否 NODES=28
+[PASS] solver C++ 随机图 #21 n=14             二染色=否 三染色=是 NODES=15
+[PASS] solver C++ 随机图 #22 n=3              二染色=是 三染色=是 NODES=4
+[PASS] solver C++ 随机图 #23 n=7              二染色=否 三染色=否 NODES=55
+[PASS] solver C++ 随机图 #24 n=3              二染色=否 三染色=是 NODES=4
+[PASS] solver C++ 随机图 #25 n=5              二染色=否 三染色=否 NODES=22
+[PASS] solver C++ 随机图 #26 n=9              二染色=否 三染色=否 NODES=403
+[PASS] solver C++ 随机图 #27 n=6              二染色=否 三染色=否 NODES=73
+[PASS] solver C++ 随机图 #28 n=13             二染色=否 三染色=是 NODES=14
+[PASS] solver C++ 随机图 #29 n=11             二染色=否 三染色=是 NODES=12
+[PASS] solver C++ 随机图 #30 n=13             二染色=否 三染色=否 NODES=589
+[PASS] solver C++ 随机图 #31 n=9              二染色=否 三染色=否 NODES=103
+[PASS] solver C++ 随机图 #32 n=7              二染色=是 三染色=是 NODES=8
+[PASS] solver C++ 随机图 #33 n=14             二染色=是 三染色=是 NODES=15
+[PASS] solver C++ 随机图 #34 n=11             二染色=否 三染色=否 NODES=154
+[PASS] solver C++ 随机图 #35 n=5              二染色=否 三染色=是 NODES=6
+[PASS] solver C++ 随机图 #36 n=9              二染色=否 三染色=是 NODES=10
+[PASS] solver C++ 随机图 #37 n=14             二染色=否 三染色=是 NODES=90
+[PASS] solver C++ 随机图 #38 n=14             二染色=否 三染色=是 NODES=18
+[PASS] solver C++ 随机图 #39 n=9              二染色=否 三染色=是 NODES=85
+[PASS] solver C++ 含自环                      二染色=否 三染色=否 NODES=0
+[PASS] solver C++ 单点无边                     二染色=是 三染色=是 NODES=2
+
+68/68 通过
+[退出码 0]
+
